@@ -46,7 +46,7 @@ export default function HomePage() {
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-portfolio-neon-blue/40 bg-portfolio-neon-blue/10 text-portfolio-neon-blue font-spacemono text-xs uppercase tracking-widest">
               <FaGraduationCap className="inline" />
-              Engineering Student · Class of 2026
+              Engineering Student · Class of 2022
             </span>
           </motion.div>
 

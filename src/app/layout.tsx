@@ -25,10 +25,13 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexus Portfolio - Cyberpunk Developer Portfolio",
+  title: "Kirtan Kunwar · Developer Portfolio",
   description:
     "A futuristic, cyberpunk-themed developer portfolio showcasing projects, skills, and gaming profile",
-};
+   icons: {
+    icon: "/icon.ico",
+   },
+  };
 
 export default function RootLayout({
   children,

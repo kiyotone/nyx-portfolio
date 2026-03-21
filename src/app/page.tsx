@@ -180,26 +180,6 @@ export default function HomePage() {
             ))}
           </motion.div>
 
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.2 }}
-            className="mt-16"
-          >
-            <div className="flex flex-col items-center">
-              <span className="text-portfolio-text-muted font-spacemono text-sm mb-2">
-                SCROLL DOWN
-              </span>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-6 h-10 border-2 border-portfolio-neon-blue rounded-full flex justify-center p-2"
-              >
-                <motion.div className="w-1 h-2 bg-portfolio-neon-blue rounded-full" />
-              </motion.div>
-            </div>
-          </motion.div>
         </div>
       </div>
 

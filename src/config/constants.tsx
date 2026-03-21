@@ -375,7 +375,7 @@ export const FEATURED_SKILLS = [
   "Git",
 ] as const;
 
-// ─── Chip colour mapping (one colour per category row) ───────────────────────
+// ─── Chip colour mappin g (one colour per category row) ───────────────────────
 
 export const CATEGORY_COLORS: Record<keyof typeof SKILLS, "blue" | "green" | "pink" | "purple"> = {
   frontend: "blue",

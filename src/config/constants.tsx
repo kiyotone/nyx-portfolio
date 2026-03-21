@@ -351,10 +351,9 @@ export const HOME_STATS = [
 
 export const SOCIAL_LINKS = [
   { platform: "github", url: "https://github.com/kiyotone" },
-  { platform: "linkedin", url: "https://linkedin.com/in/kiyotone" },
-  { platform: "twitter", url: "https://twitter.com/kiyotone" },
-  { platform: "discord", url: "https://discord.gg/kiyotone" },
-  { platform: "steam", url: "https://steamcommunity.com/id/kiyotone" },
+  { platform: "linkedin", url: "https://www.linkedin.com/in/kirtan-kunwar/" },
+  { platform: "twitter", url: "https://twitter.com/kiyo_tone" },
+  { platform: "steam", url: "https://steamcommunity.com/profiles/76561199256637392/" },
 ] as const;
 
 // ─── Featured skills for homepage ────────────────────────────────────────────

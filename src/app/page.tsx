@@ -7,7 +7,7 @@ import NeonButton from "@/components/atoms/NeonButton";
 import ParticleBackground from "@/components/atoms/ParticleBackground";
 import SocialOrb from "@/components/atoms/SocialOrb";
 import StatusIndicator from "@/components/atoms/StatusIndicator";
-import { FaArrowRight, FaCode, FaGamepad, FaRocket } from "react-icons/fa";
+import { FaArrowRight, FaCode, FaGamepad, FaRocket, FaMicrochip, FaGraduationCap } from "react-icons/fa";
 import Link from "next/link";
 import { SOCIAL_LINKS } from "@/config/constants";
 
@@ -26,6 +26,7 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-6 py-20">
         <div className="max-w-5xl mx-auto text-center">
+
           {/* Status Indicator */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -36,30 +37,60 @@ export default function HomePage() {
             <StatusIndicator status="online" showLabel size="md" />
           </motion.div>
 
-          {/* Main Heading */}
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="flex justify-center mb-4"
+          >
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-portfolio-neon-blue/40 bg-portfolio-neon-blue/10 text-portfolio-neon-blue font-spacemono text-xs uppercase tracking-widest">
+              <FaGraduationCap className="inline" />
+              Engineering Student · Class of 2026
+            </span>
+          </motion.div>
+
+          {/* Main Heading — Name */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-6"
+            className="mb-2"
           >
-            <h1 className="text-6xl md:text-8xl font-orbitron font-bold mb-4">
-              <GlitchText text="NEXUS PORTFOLIO" intensity="medium" glitchColor="blue" animated />
+            <h1 className="text-5xl md:text-7xl font-orbitron font-bold">
+              <GlitchText text="KIRTAN KUNWAR" intensity="medium" glitchColor="blue" animated />
             </h1>
           </motion.div>
 
-          {/* Subtitle */}
+          {/* Subtitle Role */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="mb-8"
+            className="mb-6"
           >
-            <p className="text-xl md:text-2xl text-portfolio-text-secondary font-rajdhani">
-              Full Stack Developer • Gaming Enthusiast • Tech Explorer
+            <p className="text-xl md:text-2xl text-portfolio-text-secondary font-rajdhani tracking-wide">
+              Software Engineer · Problem Solver · Tech Enthusiast
             </p>
-            <p className="text-lg md:text-xl text-portfolio-text-muted mt-2 font-spacemono">
-              {">"} Building the future, one line of code at a time
+            <p className="text-base md:text-lg text-portfolio-text-muted mt-2 font-spacemono">
+              {">"} Turning coffee &amp; code into real-world solutions
+            </p>
+          </motion.div>
+
+          {/* About Me Blurb */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="max-w-2xl mx-auto mb-10"
+          >
+            <p className="text-portfolio-text-secondary font-rajdhani text-lg leading-relaxed border border-portfolio-neon-blue/20 bg-portfolio-neon-blue/5 rounded-lg px-6 py-4">
+              Hi, I&apos;m <span className="text-portfolio-neon-blue font-bold">Kirtan</span> — an engineering student
+              passionate about building elegant software and solving complex problems.
+              I love diving into{" "}
+              <span className="text-portfolio-neon-green">full-stack development</span>,
+              exploring <span className="text-portfolio-neon-pink">AI &amp; systems design</span>, and
+              competing in hackathons. When I&apos;m not coding, you&apos;ll find me gaming or tinkering with new tech.
             </p>
           </motion.div>
 
@@ -68,29 +99,36 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="flex flex-wrap justify-center gap-8 mb-12"
+            className="flex flex-wrap justify-center gap-10 mb-12"
           >
             <div className="text-center">
-              <div className="text-4xl font-orbitron font-bold text-portfolio-neon-green">50+</div>
-              <div className="text-sm text-portfolio-text-secondary font-rajdhani uppercase">
-                Projects
+              <div className="text-4xl font-orbitron font-bold text-portfolio-neon-green">20+</div>
+              <div className="text-xs text-portfolio-text-secondary font-rajdhani uppercase tracking-widest mt-1">
+                Projects Built
               </div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-orbitron font-bold text-portfolio-neon-pink">5+</div>
-              <div className="text-sm text-portfolio-text-secondary font-rajdhani uppercase">
-                Years XP
+              <div className="text-4xl font-orbitron font-bold text-portfolio-neon-blue">
+                <FaMicrochip className="inline mb-1" /> CS
+              </div>
+              <div className="text-xs text-portfolio-text-secondary font-rajdhani uppercase tracking-widest mt-1">
+                Engineering Major
               </div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-orbitron font-bold text-portfolio-neon-blue">1000+</div>
-              <div className="text-sm text-portfolio-text-secondary font-rajdhani uppercase">
+              <div className="text-4xl font-orbitron font-bold text-portfolio-neon-pink">3+</div>
+              <div className="text-xs text-portfolio-text-secondary font-rajdhani uppercase tracking-widest mt-1">
+                Hackathons
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-orbitron font-bold text-portfolio-neon-yellow">1000+</div>
+              <div className="text-xs text-portfolio-text-secondary font-rajdhani uppercase tracking-widest mt-1">
                 Hours Gaming
               </div>
             </div>
           </motion.div>
 
-          {/* CTA Buttons */}
           {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -110,12 +148,12 @@ export default function HomePage() {
               <Link href="/skills">
                 <NeonButton variant="yellow" size="lg" glowIntensity="high">
                   <FaRocket className="inline mr-2" />
-                  Skills & Experience
+                  Skills &amp; Experience
                 </NeonButton>
               </Link>
               <Link href="/about">
                 <NeonButton variant="green" size="lg" glowIntensity="high">
-                  <FaRocket className="inline mr-2" />
+                  <FaGraduationCap className="inline mr-2" />
                   About Me
                 </NeonButton>
               </Link>
@@ -131,7 +169,6 @@ export default function HomePage() {
           </motion.div>
 
           {/* Social Links */}
-          {/* Socials */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -174,8 +211,9 @@ export default function HomePage() {
         className="fixed bottom-8 left-8 terminal-window p-4 hidden md:block"
       >
         <div className="text-portfolio-neon-green font-spacemono text-xs">
-          <div>$ status --check</div>
-          <div className="text-portfolio-text-secondary">&gt; System online</div>
+          <div>$ whoami</div>
+          <div className="text-portfolio-text-secondary">&gt; Kirtan Kunwar</div>
+          <div className="text-portfolio-text-secondary">&gt; Engineering Student</div>
           <div className="text-portfolio-text-secondary">&gt; Ready to build</div>
           <motion.div
             animate={{ opacity: [1, 0, 1] }}

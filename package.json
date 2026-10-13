@@ -1,0 +1,27 @@
+{
+  "name": "nyx-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "//start:standalone": "What production actually runs. `next start` warns under output:'standalone' because the server it wants is the traced one in .next/standalone, not the dev server. This copies the two directories the trace deliberately leaves out and boots it.",
+    "start:standalone": "cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static && node .next/standalone/server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^16.3.5",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.12",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "autoprefixer": "10.4.19",
+    "postcss": "^8.5.28",
+    "tailwindcss": "3.4.7",
+    "typescript": "5.5.4"
+  }
+}

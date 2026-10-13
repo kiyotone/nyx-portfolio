@@ -1,0 +1,410 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================================
+   FOUND FOOTAGE — the interface layer
+
+   The site is a videotape. Under everything is the footage (components/
+   Footage.tsx): a hallway, filmed on a camcorder, played back off tape. Over
+   it sit the things that would really be over it — the camcorder's burnt-in
+   on-screen display, the game's menu, and, when a section is opened, a typed
+   page laid over the paused frame.
+
+   Three materials, and nothing else:
+     tape   the footage and the OSD. Green-black, never pure black; white OSD
+            lettering that bleeds red and cyan the way VHS chroma does.
+     menu   letterpress capitals in the off-white of the OSD, on the footage.
+     paper  aged, typed pages: dark ink on yellowed stock.
+   REC red is the only accent. It marks the selected thing, and the lamp.
+
+   Without JavaScript, or in calm mode, there is no footage and no overlay:
+   the root has no data-ui (or has .calm) and every section is laid out as
+   one plain, still document.
+   =========================================================================== */
+
+/* TYPE, self-hosted (public/fonts, Latin subset, all SIL Open Font License):
+   IM Fell English SC for the name, the menu and file titles; Courier Prime
+   for every typed page; VT323 for the camcorder's on-screen display. */
+@font-face{ font-family: 'IM Fell English SC'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/im-fell-english-sc-400.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face{ font-family: 'Courier Prime'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/courier-prime-400.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face{ font-family: 'Courier Prime'; font-style: italic; font-weight: 400; font-display: swap; src: url(/fonts/courier-prime-400-italic.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face{ font-family: 'Courier Prime'; font-style: normal; font-weight: 700; font-display: swap; src: url(/fonts/courier-prime-700.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face{ font-family: 'VT323'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/vt323-400.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root{
+  /* tape */
+  --night:  #0b0d0a;   /* the green-black floor of the footage; the page ground */
+  --film:   #151912;   /* a raised tape surface: key caps, the calm switch */
+  --osd:    #f2f0e6;   /* OSD white: the name, the selected item, the counters */
+  --bone:   #d8d2bf;   /* reading text on the footage */
+  --dust:   #a39c87;   /* quiet text on the footage */
+  --rec:    #e3261d;   /* the REC lamp; the only accent */
+  --bleed-r: rgba(227, 38, 29, .55);  /* VHS chroma: red to the left */
+  --bleed-c: rgba(64, 196, 214, .38); /* and cyan to the right */
+
+  /* paper */
+  --paper:   #d9cfb3;
+  --paper-2: #c4b690;  /* the edges, where it has been handled */
+  --ink:     #1f1b14;
+  --ink-2:   #4b4334;  /* quiet type on the page */
+  --ink-red: #8e1510;  /* a link under the pointer */
+
+  --f-title: 'IM Fell English SC', Georgia, serif;
+  --f-type:  'Courier Prime', 'Courier New', monospace;
+  --f-osd:   'VT323', 'Courier New', monospace;
+
+  --gut: clamp(16px, 5vw, 76px);
+  --osd-in: clamp(16px, 3vw, 40px);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+
+  color-scheme: dark;
+}
+
+html, body{ margin: 0; padding: 0; }
+body{
+  background: var(--night);
+  color: var(--bone);
+  font-family: var(--f-type);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection{ background: var(--rec); color: var(--osd); }
+.paper ::selection{ background: var(--ink); color: var(--paper); }
+:focus-visible{ outline: 2px solid var(--osd); outline-offset: 4px; }
+.paper :focus-visible{ outline-color: var(--ink); }
+html{ caret-color: var(--rec); }
+/* the standard properties switch Chromium's ::-webkit-scrollbar styling off,
+   so they are given only to browsers without it (Firefox) */
+@supports not selector(::-webkit-scrollbar){
+  html{ scrollbar-color: #3a3f33 transparent; scrollbar-width: thin; }
+  .file__page{ scrollbar-color: rgba(216, 210, 191, .22) transparent; }
+}
+::-webkit-scrollbar{ width: 10px; height: 10px; }
+::-webkit-scrollbar-track{ background: transparent; }
+::-webkit-scrollbar-thumb{ background: #3a3f33; border: 3px solid transparent; background-clip: padding-box; }
+.file__page::-webkit-scrollbar-thumb{ background-color: rgba(216, 210, 191, .22); }
+::-webkit-scrollbar-button{ display: none; height: 0; }
+.file__page::-webkit-scrollbar-track{ margin: 56px 0 24px; }
+
+h1, h2, h3, h4, p, ul, table{ margin: 0; }
+kbd{
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.6em; height: 1.25em; padding: 0 .35em;
+  font: inherit; line-height: 1;
+  border: 1px solid rgba(242, 240, 230, .55); border-radius: 2px;
+  background: var(--film);
+}
+.kbd__glyph{ width: .55em; height: .7em; }
+
+/* ------------------------------------------------------------ the tape --- */
+
+.footage{
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  display: block; background: var(--night);
+}
+.footage[data-dead]{ background: var(--night) radial-gradient(60% 60% at 58% 50%, #1b2016 0%, var(--night) 70%); }
+
+/* text over footage needs a floor: the left of the frame is pulled down
+   where the name and the menu sit, and the whole frame when a file is open */
+.scrim{
+  position: fixed; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(11, 13, 10, .88) 0%, rgba(11, 13, 10, .64) 34%, rgba(11, 13, 10, 0) 66%);
+  transition: background-color .4s var(--ease);
+}
+/* the paused frame stays visible behind a file: only a veil over it */
+html[data-route="file"] .scrim{ background-color: rgba(11, 13, 10, .3); }
+
+/* -------------------------------------------------------------- the OSD --- */
+
+.osd{
+  position: fixed; inset: 0; pointer-events: none; z-index: 3;
+  font-family: var(--f-osd); color: var(--osd);
+  font-size: clamp(1.2rem, 1.9vw, 1.65rem); line-height: 1; letter-spacing: .05em;
+  text-shadow: -1px 0 var(--bleed-r), 1px 0 var(--bleed-c);
+}
+.osd p{ position: absolute; display: flex; gap: .7em; align-items: center; }
+.osd__tl{ top: var(--osd-in); left: calc(var(--osd-in) + 14px); }
+.osd__tr{ position: absolute; top: var(--osd-in); right: calc(var(--osd-in) + 14px); display: flex; flex-direction: column; align-items: flex-end; gap: .7em; }
+.osd__tr p{ position: static; }
+.osd__bl{ bottom: var(--osd-in); left: calc(var(--osd-in) + 14px); }
+.osd__br{ bottom: var(--osd-in); right: calc(var(--osd-in) + 14px); font-variant-numeric: tabular-nums; }
+.osd__mode{ display: inline-flex; align-items: center; gap: .3em; }
+.osd__glyph{ width: .5em; height: .62em; filter: drop-shadow(-1px 0 var(--bleed-r)) drop-shadow(1px 0 var(--bleed-c)); }
+.osd__dim{ opacity: .7; }
+.osd__lamp{
+  display: inline-block; width: .5em; height: .5em; border-radius: 50%;
+  background: var(--rec); margin-right: .1em;
+  animation: lamp 1s steps(1, end) infinite;
+}
+@keyframes lamp{ 50%{ opacity: 0; } }
+.osd__battery{ width: 1.4em; height: .7em; margin-left: .4em; }
+.osd__cell{ animation: lamp 1.6s steps(1, end) infinite; }
+
+.osd__corners i{
+  position: absolute; width: clamp(18px, 2.6vw, 30px); height: clamp(18px, 2.6vw, 30px);
+  border: 0 solid rgba(242, 240, 230, .7);
+}
+.osd__corners i:nth-child(1){ top: calc(var(--osd-in) - 8px); left: calc(var(--osd-in) - 8px); border-width: 2px 0 0 2px; }
+.osd__corners i:nth-child(2){ top: calc(var(--osd-in) - 8px); right: calc(var(--osd-in) - 8px); border-width: 2px 2px 0 0; }
+.osd__corners i:nth-child(3){ bottom: calc(var(--osd-in) - 8px); left: calc(var(--osd-in) - 8px); border-width: 0 0 2px 2px; }
+.osd__corners i:nth-child(4){ bottom: calc(var(--osd-in) - 8px); right: calc(var(--osd-in) - 8px); border-width: 0 2px 2px 0; }
+
+/* the one real control in the OSD */
+.osd__calm{
+  pointer-events: auto; cursor: pointer;
+  font: inherit; font-size: .78em; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--osd); text-shadow: inherit;
+  background: rgba(11, 13, 10, .55); border: 1px solid rgba(242, 240, 230, .45);
+  padding: .3em .55em .25em;
+  transition: background-color .2s, border-color .2s;
+}
+.osd__calm:hover{ background: var(--film); border-color: var(--osd); }
+.osd__state{ color: var(--dust); margin-left: .3em; }
+.osd__calm[aria-pressed="true"] .osd__state{ color: var(--rec); }
+
+/* ------------------------------------------------- the title and menu --- */
+
+.title-screen{
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  padding: calc(var(--osd-in) + clamp(36px, 7vh, 72px)) var(--gut) calc(var(--osd-in) + clamp(44px, 7.5vh, 76px));
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+.title-screen::-webkit-scrollbar{ display: none; }
+.logo{
+  font-family: var(--f-title); font-weight: 400;
+  font-size: clamp(2.7rem, min(7.2vw, 11.5vh), 6rem);
+  line-height: .88; letter-spacing: .005em;
+  color: var(--osd);
+  text-shadow: -2px 0 var(--bleed-r), 2px 0 var(--bleed-c);
+  text-wrap: balance;
+}
+.lede{
+  max-width: 46ch;
+  margin: clamp(14px, 2.4vh, 24px) 0 clamp(22px, 5vh, 52px);
+  font-size: clamp(.94rem, 1.15vw, 1.04rem); line-height: 1.6;
+  color: var(--bone);
+}
+
+.menu ul{ list-style: none; padding: 0; margin: 0; }
+.menu__item{
+  display: inline-flex; align-items: center; gap: .45em;
+  padding: clamp(1px, .45vh, 5px) .2em clamp(1px, .45vh, 5px) 0;
+  font-family: var(--f-title);
+  font-size: clamp(1.35rem, min(2.5vw, 4.3vh), 2.15rem); line-height: 1.12;
+  color: var(--dust); text-decoration: none;
+  transition: color .18s, transform .35s var(--ease), text-shadow .18s;
+}
+.menu__mark{
+  width: .3em; height: .3em; background: var(--rec);
+  transform: scale(0); transition: transform .3s var(--ease);
+}
+.menu__item[data-sel]{
+  color: var(--osd); transform: translateX(.25em);
+  text-shadow: -1.5px 0 var(--bleed-r), 1.5px 0 var(--bleed-c);
+}
+.menu__item[data-sel] .menu__mark{ transform: scale(1); }
+.menu__item:focus-visible{ outline: 1px solid rgba(242, 240, 230, .5); outline-offset: 6px; }
+
+/* the game's own prompt line */
+.prompts{
+  position: fixed; z-index: 3; left: 50%; transform: translateX(-50%);
+  bottom: var(--osd-in);
+  display: flex; gap: 1.6em; white-space: nowrap;
+  font-family: var(--f-osd); font-size: clamp(1.05rem, 1.5vw, 1.3rem); line-height: 1;
+  color: var(--bone); letter-spacing: .04em;
+}
+.prompts span{ display: inline-flex; align-items: center; gap: .45em; }
+.prompts__move{ color: var(--dust); }
+
+/* -------------------------------------------------------------- files --- */
+
+.file__head{ display: flex; align-items: baseline; justify-content: space-between; gap: 1em; }
+.file__title{
+  font-family: var(--f-title); font-weight: 400;
+  font-size: clamp(2rem, 3.6vw, 3.1rem); line-height: .92;
+  color: var(--osd);
+  text-shadow: -1.5px 0 var(--bleed-r), 1.5px 0 var(--bleed-c);
+  outline: none;
+}
+.file__sub{ color: var(--bone); font-size: .95rem; line-height: 1.6; max-width: 42ch; }
+
+.back{
+  display: inline-flex; align-items: center; gap: .5em; flex: none;
+  font-family: var(--f-osd); font-size: 1.25rem; line-height: 1; letter-spacing: .04em;
+  color: var(--bone); text-decoration: none;
+}
+.back:hover{ color: var(--osd); }
+.back:hover kbd{ border-color: var(--osd); }
+
+.index{ list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+.index__item{
+  display: flex; align-items: baseline; gap: .55em; width: 100%;
+  padding: .5em 0; border: 0; background: none; cursor: pointer; text-align: left;
+  font-family: var(--f-type); font-size: .95rem; line-height: 1.4;
+  color: var(--dust);
+  border-top: 1px solid rgba(216, 210, 191, .14);
+  transition: color .15s;
+}
+.index li:last-child .index__item{ border-bottom: 1px solid rgba(216, 210, 191, .14); }
+.index__item::before{
+  content: ''; flex: none; width: .45em; height: .45em; transform: translateY(-.1em) scale(0);
+  background: var(--rec); transition: transform .25s var(--ease);
+}
+.index__item:hover{ color: var(--bone); }
+.index__item[aria-current="true"]{ color: var(--osd); }
+.index__item[aria-current="true"]::before{ transform: translateY(-.1em) scale(1); }
+
+/* the page: aged stock, typed, handled, folded once, taped down. The wear,
+   the torn outline and the tape are rasters in public/paper/; the sheet's
+   shadow sits on the wrapper because the outline mask would cut it off the
+   sheet itself. */
+.sheet{
+  position: relative; max-width: 68ch;
+  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .6)) drop-shadow(0 3px 5px rgba(0, 0, 0, .45));
+}
+.sheet::before, .sheet::after{
+  content: ''; position: absolute; z-index: 1; top: -16px; width: 112px; height: 33px;
+  background: url(/paper/tape-a.png) center / 100% 100% no-repeat;
+}
+.sheet::before{ left: 9%; transform: rotate(-4deg); }
+.sheet::after{ right: 9%; transform: rotate(3deg); background-image: url(/paper/tape-b.png); }
+.paper{
+  position: relative;
+  padding: clamp(30px, 4.4vw, 60px) clamp(22px, 4.6vw, 64px) clamp(34px, 4.6vw, 64px);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    url(/paper/wear.png),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .32  0 0 0 0 .25  0 0 0 0 .13  0 0 0 .2 0'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
+  background-size: 100% 100%, 260px 260px;
+  -webkit-mask: url(/paper/edge.png) 0 0 / 100% 100% no-repeat;
+          mask: url(/paper/edge.png) 0 0 / 100% 100% no-repeat;
+  font-size: 1rem; line-height: 1.68;
+}
+
+.entry > * + *{ margin-top: 1em; }
+.doc__title{
+  font-family: var(--f-type); font-weight: 700;
+  font-size: 1.32rem; line-height: 1.3; letter-spacing: .02em; text-transform: uppercase;
+  text-wrap: balance;
+}
+.doc__title--long{ text-transform: none; letter-spacing: 0; font-size: 1.24rem; }
+.doc__sub{ font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: 1rem; padding-top: .6em; }
+.doc__meta{ color: var(--ink-2); font-size: .9rem; }
+.entry > .doc__meta:first-of-type{ margin-top: .35em; }
+.doc__links{ display: flex; flex-wrap: wrap; gap: .5em 1.6em; }
+.doc__links--big{ font-size: 1.15rem; flex-direction: column; align-items: flex-start; }
+
+.ink{
+  color: var(--ink); font-weight: 700;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;
+  transition: color .15s;
+}
+.ink:hover{ color: var(--ink-red); text-decoration-thickness: 2px; }
+
+.ticks{ list-style: none; padding: 0; }
+.ticks li{ position: relative; padding-left: 1.6em; }
+.ticks li + li{ margin-top: .7em; }
+.ticks li::before{ content: '-'; position: absolute; left: .3em; color: var(--ink-2); }
+
+.log{ width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.log th, .log td{ text-align: left; vertical-align: baseline; padding: .7em 0; border-top: 1px dashed rgba(31, 27, 20, .35); }
+.log tr:last-child th, .log tr:last-child td{ border-bottom: 1px dashed rgba(31, 27, 20, .35); }
+.log th{ font-weight: 700; font-size: 1.12rem; padding-right: 1.4em; white-space: nowrap; }
+.log__note{ display: block; color: var(--ink-2); font-size: .88rem; }
+
+/* ======================================================= the live tape === */
+
+html[data-ui]:not(.calm) body{ overflow: hidden; }
+html[data-ui]:not(.calm) .site{ position: relative; z-index: 2; }
+
+html[data-ui]:not(.calm) .title-screen{
+  position: fixed; inset: 0; overflow-y: auto; min-height: 0;
+}
+html[data-ui]:not(.calm)[data-route="file"] .title-screen{ display: none; }
+
+html[data-ui]:not(.calm) .file{ display: none; }
+html[data-ui]:not(.calm)[data-file="projects"] #projects,
+html[data-ui]:not(.calm)[data-file="numbers"] #numbers,
+html[data-ui]:not(.calm)[data-file="paper"] #paper,
+html[data-ui]:not(.calm)[data-file="record"] #record,
+html[data-ui]:not(.calm)[data-file="next"] #next,
+html[data-ui]:not(.calm)[data-file="contact"] #contact{
+  display: block; position: fixed; inset: 0; overflow-y: auto;
+  padding: calc(var(--osd-in) + 64px) var(--gut) calc(var(--osd-in) + 60px);
+}
+html[data-ui]:not(.calm) .file__frame{
+  max-width: 1200px; height: 100%; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(230px, 330px) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 80px);
+}
+html[data-ui]:not(.calm) .file__side{ display: flex; flex-direction: column; gap: 1.5rem; min-height: 0; padding-top: 6px; }
+html[data-ui]:not(.calm) .file__page{ min-height: 0; overflow-y: auto; padding: 22px 18px 40px 6px; }
+html[data-ui]:not(.calm) .sheet{ transform: rotate(-.35deg); }
+html[data-ui]:not(.calm) .entry:not(.is-current){ display: none; }
+
+/* the one cut: a tape changing over — the picture rolls in and settles */
+@keyframes tape-in{
+  0%  { opacity: .3; transform: translateY(-2.5%); clip-path: inset(44% 0 44% 0); filter: brightness(1.9) contrast(1.4); }
+  55% { clip-path: inset(0 0 0 0); filter: brightness(1.15); }
+  100%{ opacity: 1; transform: none; clip-path: inset(0 0 0 0); filter: none; }
+}
+html[data-ui]:not(.calm) .file__frame,
+html[data-ui]:not(.calm) .title-screen > *{ animation: tape-in .55s var(--ease) both; }
+html[data-ui]:not(.calm) .title-screen > .menu{ animation-delay: .06s; }
+
+/* --------------------------------------------------------- small screens */
+@media (max-width: 860px){
+  html[data-ui]:not(.calm) .file__frame{ display: block; height: auto; }
+  html[data-ui]:not(.calm) .file__side{ gap: 1rem; margin-bottom: 1.6rem; }
+  html[data-ui]:not(.calm) .file__page{ overflow: visible; padding: 14px 0 0; }
+  html[data-ui]:not(.calm) .index{ flex-direction: row; overflow-x: auto; gap: .5rem; margin: 0 calc(-1 * var(--gut)); padding: 0 var(--gut) 6px; scrollbar-width: none; }
+  html[data-ui]:not(.calm) .index li{ flex: none; }
+  html[data-ui]:not(.calm) .index__item{
+    width: auto; max-width: 15em; padding: .45em .7em; border: 1px solid rgba(216, 210, 191, .22);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .88rem;
+  }
+  html[data-ui]:not(.calm) .index li:last-child .index__item{ border-bottom: 1px solid rgba(216, 210, 191, .22); }
+  html[data-ui]:not(.calm) .index__item[aria-current="true"]{ border-color: var(--osd); }
+  .prompts{ display: none; }
+}
+@media (max-width: 560px){
+  .osd{ font-size: 1.1rem; }
+  .osd__bl{ flex-direction: column; align-items: flex-start; gap: .25em; }
+  .osd__rec{ font-size: .95em; }
+  .scrim{ background: linear-gradient(180deg, rgba(11, 13, 10, .08) 0%, rgba(11, 13, 10, .12) 36%, rgba(11, 13, 10, .8) 52%, rgba(11, 13, 10, .88) 100%); }
+  html[data-ui]:not(.calm) .title-screen{ justify-content: flex-end; padding-bottom: calc(var(--osd-in) + 70px); }
+  .sheet::before, .sheet::after{ width: 80px; height: 24px; top: -12px; }
+}
+@media (hover: none){ .prompts__move{ display: none; } }
+@media (max-height: 560px) and (min-width: 561px){
+  .lede{ display: none; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation: none !important; transition: none !important; }
+}
+
+/* ============================================ plain document (calm / no JS) */
+
+html:not([data-ui]) .footage, html.calm .footage,
+html:not([data-ui]) .scrim, html.calm .scrim,
+html:not([data-ui]) .prompts, html.calm .prompts,
+html:not([data-ui]) .back, html.calm .back,
+html:not([data-ui]) .index, html.calm .index,
+html:not([data-ui]) .osd__corners, html.calm .osd__corners,
+html:not([data-ui]) .osd p, html.calm .osd p{ display: none; }
+html:not([data-ui]) .osd, html.calm .osd{ position: absolute; height: 0; }
+html:not([data-ui]) .osd__tr, html.calm .osd__tr{ position: absolute; }
+
+html:not([data-ui]) .site, html.calm .site{
+  max-width: 76ch; margin: 0 auto; padding: 96px 20px 80px;
+}
+html:not([data-ui]) .title-screen, html.calm .title-screen{ padding: 0 0 56px; }
+html:not([data-ui]) .file, html.calm .file{ padding: 48px 0 0; }
+html:not([data-ui]) .file__side, html.calm .file__side{ display: grid; gap: .8rem; margin-bottom: 1.4rem; }
+html:not([data-ui]) .entry + .entry, html.calm .entry + .entry{ margin-top: 2.4em; padding-top: 2em; border-top: 1px dashed rgba(31, 27, 20, .35); }

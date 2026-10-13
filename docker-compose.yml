@@ -1,0 +1,13 @@
+services:
+  site:
+    build:
+      context: .
+      target: runner
+    image: nyx-portfolio:latest
+    # Only Caddy, on the same host, talks to the site: the port is bound to
+    # loopback, so it is never reachable from outside the server directly.
+    ports:
+      - '127.0.0.1:${PORT:-3000}:3000'
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped

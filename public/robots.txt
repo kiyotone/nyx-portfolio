@@ -1,0 +1,6 @@
+# Everything here is meant to be read.
+User-agent: *
+Allow: /
+
+# The guide endpoint is a stub and answers 501. Nothing to crawl.
+Disallow: /api/

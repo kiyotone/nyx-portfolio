@@ -19,7 +19,7 @@ npm run build
 
 ## Deploy (Docker + Caddy)
 
-The site runs in one container bound to `127.0.0.1:3000`. Caddy sits in front
+The site runs in one container bound to `127.0.0.1:3100`. Caddy sits in front
 of it on the same server, serves `kirtankunwar.com`, and handles HTTPS.
 
 One-time setup on the server (needs git, Docker with the compose plugin, and
@@ -45,8 +45,9 @@ Every deploy after that:
 ```
 
 It pulls, rebuilds, restarts, waits until the site answers, and reloads
-Caddy. To run on another port, use `PORT=8080 ./deploy.sh` and change
-`reverse_proxy` in the Caddyfile to match.
+Caddy. It refuses to start, and names the culprit, if the port is taken. To
+use another port run `PORT=3200 ./deploy.sh` once; the port is saved in `.env`
+for later runs. Change `reverse_proxy` in the Caddyfile to match.
 
 ## Never ships
 

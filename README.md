@@ -19,24 +19,17 @@ npm run build
 
 ## Deploy (Docker + Caddy)
 
-The site runs in one container bound to `127.0.0.1:3100`. Caddy sits in front
-of it on the same server, serves `kirtankunwar.com`, and handles HTTPS.
+Two containers from `docker-compose.yml`: the site, and Caddy in front of it
+on port 80. The site has no host port of its own, so it never collides with
+other containers on the server. Needs git and Docker with the compose plugin.
 
-One-time setup on the server (needs git, Docker with the compose plugin, and
-Caddy):
+First time:
 
 ```bash
-git clone git@github.com:kiyotone/nyx-portfolio.git
+git clone git@github-nyx:kiyotone/nyx-portfolio.git
 cd nyx-portfolio
-chmod +x deploy.sh
 ./deploy.sh
-sudo cp Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
 ```
-
-Point the `A` records for `kirtankunwar.com` and `www.kirtankunwar.com` at the
-server, and Caddy fetches the certificate itself. If the server's Caddy
-already serves other sites, paste the two blocks from `Caddyfile` into the
-existing config instead of replacing it.
 
 Every deploy after that:
 
@@ -44,10 +37,19 @@ Every deploy after that:
 ./deploy.sh
 ```
 
-It pulls, rebuilds, restarts, waits until the site answers, and reloads
-Caddy. It refuses to start, and names the culprit, if the port is taken. To
-use another port run `PORT=3200 ./deploy.sh` once; the port is saved in `.env`
-for later runs. Change `reverse_proxy` in the Caddyfile to match.
+It pulls, rebuilds, starts both containers, and waits until the site answers
+through Caddy. If port 80 is taken, it stops and names what holds it. To serve
+on another port, run `HTTP_PORT=8080 ./deploy.sh` once; the setting is saved in
+`.env`.
+
+### HTTPS on the domain
+
+1. Point the `A` records for `kirtankunwar.com` (and `www`) at the server.
+2. In `docker-compose.yml`, uncomment the `443:443` line under `caddy`.
+3. Run `SITE_ADDRESS=kirtankunwar.com ./deploy.sh` once.
+
+Caddy then fetches and renews the certificate itself, and redirects HTTP to
+HTTPS.
 
 ## Never ships
 

@@ -1,0 +1,21 @@
+# Caddy, in its own container beside the site (see docker-compose.yml).
+#
+# SITE_ADDRESS decides how it serves, and is set in .env:
+#   :80 (the default)  plain HTTP on port 80, for any hostname or the bare IP
+#   kirtankunwar.com   HTTPS with a certificate Caddy fetches and renews itself.
+#                      Needs DNS pointing here and port 443 published too
+#                      (see the README).
+
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+	reverse_proxy site:3000
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	@static path /_next/static/* /fonts/* /paper/*
+	header @static Cache-Control "public, max-age=31536000, immutable"
+}

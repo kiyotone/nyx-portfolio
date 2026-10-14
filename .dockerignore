@@ -10,7 +10,7 @@ CLAUDE.md
 Dockerfile
 .dockerignore
 docker-compose.yml
-Caddyfile
+caddy
 deploy.sh
 .env*
 *.tar.gz

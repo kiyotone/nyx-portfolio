@@ -17,7 +17,17 @@ npm run typecheck
 npm run build
 ```
 
-## Deploy (Docker + Caddy)
+## Deploy on Vercel
+
+The site is hosted on Vercel from this repo. Every push to `main` deploys to
+production, and every other branch gets a preview URL. No build settings are
+needed; Vercel detects Next.js.
+
+The domain is added in the Vercel project under Settings → Domains. At the
+registrar, point `kirtankunwar.com` and `www` at Vercel using the exact
+records that page shows. Vercel issues the HTTPS certificate itself.
+
+## Deploy (Docker + Caddy), self-hosted alternative
 
 Two containers from `docker-compose.yml`: the site, and Caddy in front of it
 on port 80. The site has no host port of its own, so it never collides with

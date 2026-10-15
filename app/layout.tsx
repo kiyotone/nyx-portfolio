@@ -2,11 +2,15 @@ import type { Metadata, Viewport } from 'next';
 import { SECTIONS } from '@/content/sections';
 import './globals.css';
 
-/* Set NEXT_PUBLIC_SITE_URL in the deploy environment. It is only used to make
-   the Open Graph image URL absolute, which crawlers require — relative ones
-   are ignored and the link preview comes back blank. The fallback below is a
-   placeholder; change it or set the variable before going public. */
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kirtankunwar.com';
+/* The site's public origin. It is only used to make the Open Graph image URL
+   absolute, which crawlers require — relative ones are ignored and the link
+   preview comes back blank. On Vercel it follows the production domain on its
+   own; NEXT_PUBLIC_SITE_URL overrides it anywhere else. */
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'https://kirtankunwar.com');
 
 const DESCRIPTION =
   "Software engineer in Kathmandu: C++ engines and runtimes, and work on Nepal's healthcare systems.";
